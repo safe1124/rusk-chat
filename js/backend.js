@@ -35,8 +35,12 @@ class BackendService {
                     color: '#4CAF50'
                 };
             } else {
+                const errorText = await response.text();
+                console.error(`Netlify 백엔드 상태 확인 오류 (${response.status}):`, errorText);
+                const titleMatch = errorText.match(/<title>(.*?)<\/title>/);
+                const cleanError = titleMatch ? titleMatch[1] : `오류 ${response.status}`;
                 return {
-                    message: `🔌 Netlify 백엔드 오류 (${response.status})`,
+                    message: `🔌 Netlify 백엔드 오류 (${cleanError})`,
                     color: '#F44336'
                 };
             }
@@ -62,9 +66,18 @@ class BackendService {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                console.error('백엔드 응답 오류:', errorData);
-                throw new Error(errorData.error || `서버 오류: ${response.status}`);
+                const errorText = await response.text();
+                let errorJson;
+                try {
+                    errorJson = JSON.parse(errorText);
+                } catch (e) {
+                    console.error('백엔드 비-JSON 응답:', errorText);
+                    const titleMatch = errorText.match(/<title>(.*?)<\/title>/);
+                    const cleanError = titleMatch ? titleMatch[1] : `서버 오류: ${response.status}`;
+                    throw new Error(cleanError);
+                }
+                console.error('백엔드 응답 오류:', errorJson);
+                throw new Error(errorJson.error || `서버 오류: ${response.status}`);
             }
 
             const data = await response.json();

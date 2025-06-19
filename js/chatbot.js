@@ -201,7 +201,21 @@ class Chatbot {
     
     // 설정 관련 메서드들
     initializeSettings() {
+        console.log("Initializing settings...");
+        this.settingsModal = document.getElementById('settings-modal');
+        if (!this.settingsModal) {
+            console.error("Settings modal not found!");
+            return;
+        }
+
+        // 캐릭터 프로필 업데이트
+        this.updateCharacterProfile();
+        
+        // 저장된 설정 로드
+        this.loadSettings();
         this.updateSettingsUI();
+        // this.updateEnvironmentInfo(); // 이 줄을 제거하거나 주석 처리합니다.
+        console.log("Settings initialized.");
     }
     
     // 설정 UI 업데이트
@@ -209,8 +223,25 @@ class Chatbot {
         // 캐릭터 프로필 업데이트
         this.updateCharacterProfile();
         
-        // 환경 정보 업데이트
-        this.updateEnvironmentInfo();
+        const character = characterManager.getCurrentCharacter();
+        const currentAvatar = characterManager.getCurrentAvatar();
+        
+        // 기본 설정 값으로 초기화
+        this.settingsCharacterSelect = document.getElementById('settingsCharacterSelect');
+        this.settingsBackendSelect = document.getElementById('settingsBackendSelect');
+        this.settingsModelSelect = document.getElementById('settingsModelSelect');
+        
+        // 캐릭터 선택 설정
+        this.settingsCharacterSelect.value = this.characterId;
+        this.settingsBackendSelect.value = this.backend;
+        this.updateModelSelect();
+        this.settingsModelSelect.value = this.model;
+        // this.updateEnvironmentInfo();
+    }
+    
+    loadSettings() {
+        // TODO: 설정 로드 구현
+        console.log("Loading settings...");
     }
     
     // 캐릭터 프로필 업데이트
