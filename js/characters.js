@@ -197,35 +197,48 @@ class CharacterManager {
     
     // 감정에 따른 아바타 표시 (1초간)
     showEmotionAvatar(emotion) {
-        const characterAvatar = document.getElementById('characterAvatar');
-        const typingAvatar = document.querySelector('.typing-avatar img');
-        const introAvatar = document.querySelector('.intro-avatar');
-        
-        if (!characterAvatar) return;
-        
-        const character = this.getCurrentCharacter();
-        const emotionImage = this.getEmotionImage(emotion);
-        
-        // 원래 이미지 저장
-        const originalSrc = characterAvatar.src;
-        const originalTypingSrc = typingAvatar ? typingAvatar.src : null;
-        const originalIntroSrc = introAvatar ? introAvatar.src : null;
-        
-        // 감정 이미지로 변경
-        characterAvatar.src = emotionImage;
-        if (typingAvatar) typingAvatar.src = emotionImage;
-        if (introAvatar) introAvatar.src = emotionImage;
-        
-        // 1초 후 원래 이미지로 복원
-        setTimeout(() => {
-            characterAvatar.src = originalSrc;
-            if (typingAvatar) typingAvatar.src = originalTypingSrc;
-            if (introAvatar) introAvatar.src = originalIntroSrc;
-        }, 1000);
-        
-        // 현재 감정 업데이트
-        character.current_emotion = emotion;
-        this.updateCurrentEmotion(emotion);
+        try {
+            const characterAvatar = document.getElementById('characterAvatar');
+            const typingAvatar = document.querySelector('.typing-avatar img');
+            const introAvatar = document.querySelector('.intro-avatar');
+            
+            if (!characterAvatar) {
+                console.warn('Character avatar element not found');
+                return;
+            }
+            
+            const character = this.getCurrentCharacter();
+            const emotionImage = this.getEmotionImage(emotion);
+            
+            // 원래 이미지 저장
+            const originalSrc = characterAvatar.src;
+            const originalTypingSrc = typingAvatar ? typingAvatar.src : null;
+            const originalIntroSrc = introAvatar ? introAvatar.src : null;
+            
+            // 감정 이미지로 변경
+            characterAvatar.src = emotionImage;
+            if (typingAvatar) typingAvatar.src = emotionImage;
+            if (introAvatar) introAvatar.src = emotionImage;
+            
+            // 1초 후 원래 이미지로 복원
+            setTimeout(() => {
+                try {
+                    characterAvatar.src = originalSrc;
+                    if (typingAvatar && originalTypingSrc) typingAvatar.src = originalTypingSrc;
+                    if (introAvatar && originalIntroSrc) introAvatar.src = originalIntroSrc;
+                } catch (restoreError) {
+                    console.error('Avatar restoration error:', restoreError);
+                }
+            }, 1000);
+            
+            // 현재 감정 업데이트
+            if (character) {
+                character.current_emotion = emotion;
+                this.updateCurrentEmotion(emotion);
+            }
+        } catch (error) {
+            console.error('showEmotionAvatar error:', error);
+        }
     }
     
     // 감정에 맞는 이미지 경로 반환
