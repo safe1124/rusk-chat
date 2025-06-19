@@ -249,13 +249,12 @@ class CharacterManager {
             'sad': getPath('sad.png'),
             'angry': getPath('angry.png'),
             'shy': getPath('shy.png'),
-            'odoroki': getPath('odoroki.png'),
-            'netural': getPath('netural.png'),
+            'surprised': getPath('odoroki.png'),
+            'confused': getPath('neutral.png'),
             'normal': getPath('normal.png'),
             'brave': getPath('brave.png')
         };
-        
-        return validEmotions[emotion] || getPath('normal.png');
+        return validEmotions[emotion] || getPath('happy.png');
     }
     
     // 현재 감정 표시 업데이트
@@ -267,8 +266,8 @@ class CharacterManager {
                 'sad': '슬픔 😢',
                 'angry': '화남 😠',
                 'shy': '부끄러움 😳',
-                'odoroki': '놀람 😲',
-                'netural': '평범함 😐',
+                'surprised': '놀람 😲',
+                'confused': '혼란 😕',
                 'normal': '기본 🙂',
                 'brave': '용감함 😤'
             };
