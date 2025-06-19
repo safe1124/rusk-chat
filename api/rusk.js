@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-    // CORS 설정
+    // CORS 설정 (최상단에 위치)
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -83,9 +83,9 @@ export default async function handler(req, res) {
         if (!response.ok) {
             const errorData = await response.text();
             console.error('OpenAI API Error:', response.status, errorData);
-            
             // API 오류에 대한 친근한 메시지
             return res.status(200).json({
+                error: `OpenAI API Error: ${response.status} ${errorData}`,
                 response: "어? 뭔가 문제가 생겼네... 🤔 잠깐만, 다시 시도해볼게!"
             });
         }
@@ -97,9 +97,9 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error('Server Error:', error);
-        
         // 서버 오류에 대한 친근한 메시지
         res.status(200).json({
+            error: error.message || 'Server Error',
             response: "앗, 뭔가 꼬였네! 😳 조금 후에 다시 얘기해줄래?"
         });
     }
