@@ -69,12 +69,19 @@ class BackendService {
         }
 
         try {
+            // messages 배열을 백엔드가 기대하는 구조로 변환
+            const history = messages.slice(0, -1).map(m => ({
+                sender: m.role,
+                message: m.content
+            }));
+            const message = messages[messages.length - 1]?.content || '';
+
             const response = await fetch(`${this.baseUrl}/api/rusk`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ messages })
+                body: JSON.stringify({ message, history })
             });
 
             if (!response.ok) {
