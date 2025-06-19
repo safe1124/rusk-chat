@@ -1,0 +1,16 @@
+{
+  "name": "rusk-chat",
+  "version": "1.0.0",
+  "description": "AI Character Chatbot",
+  "scripts": {
+    "build": "echo 'Static site - no build required'",
+    "start": "echo 'Static site - use serve or similar'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/safe1124/rusk-chat"
+  },
+  "keywords": ["ai", "chatbot", "vercel"],
+  "author": "shin",
+  "license": "MIT"
+}

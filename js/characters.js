@@ -15,14 +15,14 @@ class CharacterManager {
                 dislikes: ['슬픈 이야기', '혼자 있는 시간', '복잡한 문제'],
                 speaking_style: '정중하면서도 친근한 말투, 일본어와 한국어를 자연스럽게 섞어 사용',
                 avatars: {
-                    happy: '/happy.png',
-                    sad: '/sad.png',
-                    excited: '/happy.png',
-                    confused: '/netural.png',
-                    angry: '/angry.PNG',
-                    surprised: '/odoroki.png',
-                    shy: '/shy.png',
-                    default: '/happy.png'
+                    happy: window.IMAGE_CONFIG?.getImagePath('happy.png') || '/happy.png',
+                    sad: window.IMAGE_CONFIG?.getImagePath('sad.png') || '/sad.png',
+                    excited: window.IMAGE_CONFIG?.getImagePath('happy.png') || '/happy.png',
+                    confused: window.IMAGE_CONFIG?.getImagePath('netural.png') || '/netural.png',
+                    angry: window.IMAGE_CONFIG?.getImagePath('angry.PNG') || '/angry.PNG',
+                    surprised: window.IMAGE_CONFIG?.getImagePath('odoroki.png') || '/odoroki.png',
+                    shy: window.IMAGE_CONFIG?.getImagePath('shy.png') || '/shy.png',
+                    default: window.IMAGE_CONFIG?.getImagePath('happy.png') || '/happy.png'
                 },
                 current_emotion: 'happy',
                 responses: {
@@ -243,18 +243,19 @@ class CharacterManager {
     
     // 감정에 맞는 이미지 경로 반환
     getEmotionImage(emotion) {
+        const getPath = window.IMAGE_CONFIG?.getImagePath || ((name) => '/' + name);
         const validEmotions = {
-            'happy': '/happy.png',
-            'sad': '/sad.png',
-            'angry': '/angry.PNG',
-            'shy': '/shy.png',
-            'odoroki': '/odoroki.png',
-            'netural': '/netural.png',
-            'normal': '/normal.png',
-            'brave': '/brave.png'
+            'happy': getPath('happy.png'),
+            'sad': getPath('sad.png'),
+            'angry': getPath('angry.PNG'),
+            'shy': getPath('shy.png'),
+            'odoroki': getPath('odoroki.png'),
+            'netural': getPath('netural.png'),
+            'normal': getPath('normal.png'),
+            'brave': getPath('brave.png')
         };
         
-        return validEmotions[emotion] || '/normal.png';
+        return validEmotions[emotion] || getPath('normal.png');
     }
     
     // 현재 감정 표시 업데이트
