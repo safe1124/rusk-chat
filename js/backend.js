@@ -3,11 +3,7 @@ class BackendService {
     constructor() {
         // environment.js에서 백엔드 URL 가져오기
         this.baseUrl = envConfig.backendUrl;
-        this.isVercel = this.baseUrl && this.baseUrl.includes('vercel.app');
-        if (!this.isVercel) {
-            // Vercel 백엔드가 아니면 강제로 오류 처리
-            throw new Error('Vercel 백엔드 URL이 올바르지 않습니다. 환경설정을 확인하세요.');
-        }
+        this.isVercel = true; // 항상 Vercel 환경으로 간주
         console.log(`백엔드 URL: ${this.baseUrl}, Vercel 연결: ${this.isVercel}`);
     }
 
@@ -60,14 +56,6 @@ class BackendService {
 
     // 채팅 메시지 전송
     async sendMessage(messages) {
-        if (!this.isVercel) {
-            // isVercel이 false일 경우, 오류를 발생시키거나 적절한 메시지를 반환합니다.
-            // 이제 로컬 모드는 지원하지 않으므로, 백엔드 연결이 필수적입니다.
-            const errorMsg = "Vercel 백엔드에 연결되어 있지 않습니다. 환경 설정을 확인하세요.";
-            console.error(errorMsg);
-            throw new Error(errorMsg);
-        }
-
         try {
             // messages 배열을 백엔드가 기대하는 구조로 변환
             const history = messages.slice(0, -1).map(m => ({
@@ -76,6 +64,7 @@ class BackendService {
             }));
             const message = messages[messages.length - 1]?.content || '';
 
+            console.log('API 호출 시작:', this.baseUrl);
             const response = await fetch(`${this.baseUrl}/api/rusk`, {
                 method: 'POST',
                 headers: {
