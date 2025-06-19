@@ -16,15 +16,16 @@ class OpenAIService {
         try {
             // window.backend는 backend.js에서 노출된 전역 백엔드 서비스 인스턴스입니다.
             const response = await window.backend.sendMessage(this.history);
-            
-            if (response && response.content) {
-                this.history.push({ role: 'assistant', content: response.content });
+            // 응답 구조가 response.content 또는 response.response일 수 있음
+            const reply = response.content || response.response;
+            if (reply) {
+                this.history.push({ role: 'assistant', content: reply });
                 
                 // 대화 기록이 너무 길어지는 것을 방지 (예: 마지막 20개만 유지)
                 if (this.history.length > 20) {
                     this.history = this.history.slice(-20);
                 }
-                return response.content;
+                return reply;
             } else {
                 const errorMessage = response.error || '백엔드로부터 유효한 응답을 받지 못했습니다.';
                 throw new Error(errorMessage);
