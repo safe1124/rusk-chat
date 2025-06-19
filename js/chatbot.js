@@ -93,14 +93,14 @@ class Chatbot {
         const length = value.length;
         
         // 글자 수 업데이트
-        this.charCount.textContent = `${length}/1000`;
+        this.charCount.textContent = `${length}/100`;
         
         // 전송 버튼 활성화/비활성화
-        this.sendBtn.disabled = length === 0 || length > 1000;
+        this.sendBtn.disabled = length === 0 || length > 100;
         
         // 글자 수 색상 변경
-        if (length > 900) {
-            this.charCount.style.color = length > 1000 ? '#ef4444' : '#f59e0b';
+        if (length > 80) {
+            this.charCount.style.color = length > 100 ? '#ef4444' : '#f59e0b';
         } else {
             this.charCount.style.color = '#9ca3af';
         }
