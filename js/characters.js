@@ -99,7 +99,7 @@ class CharacterManager {
     getCharacterById(id) {
         return this.characters.find(char => char.id === id);
     }
-     // 캐릭터의 응답 생성 (항상 백엔드 API 사용)
+     // 캐릭터의 응답 생성 (백엔드 API만 사용)
     async generateResponse(message) {
         const char = this.currentCharacter;
         
@@ -108,9 +108,9 @@ class CharacterManager {
             const response = await openaiService.generateResponse(message, char);
             return response;
         } catch (error) {
-            console.error('AI API 호출 실패:', error);
-            // API 실패 시 기본 응답으로 폴백
-            return this.getLocalResponse(message);
+            console.error('백엔드 API 호출 실패:', error);
+            // 백엔드 실패 시에만 임시로 기본 응답 사용
+            return `죄송해요, 지금 서버에 문제가 있는 것 같아요. 😅 잠시 후 다시 시도해주세요!`;
         }
     }
     
