@@ -104,55 +104,14 @@ class CharacterManager {
         const char = this.currentCharacter;
         
         try {
-            console.log('캐릭터 응답 생성 시작:', message);
-            
             // 백엔드 API를 통한 AI 응답 생성
             const response = await openaiService.generateResponse(message, char);
-            
-            console.log('생성된 응답:', response);
             return response;
-            
         } catch (error) {
             console.error('백엔드 API 호출 실패:', error);
-            
-            // 백엔드 실패 시 라스크다운 로컬 응답 (최후의 수단)
-            return this.getLocalResponse(message);
+            // 백엔드 실패 시 고정된 오류 메시지 반환
+            return "죄송해요, 지금은 답을 드릴 수 없어요. 서버에 문제가 생긴 것 같아요. 😥";
         }
-    }
-    
-    // 로컬 응답 생성 (기본 패턴 매칭)
-    getLocalResponse(message) {
-        const char = this.currentCharacter;
-        const lowerMessage = message.toLowerCase();
-        
-        // 메시지 패턴에 따른 응답 선택
-        if (this.containsWords(lowerMessage, ['안녕', 'hi', 'hello', '헬로', '하이', 'こんにちは', 'はじめまして'])) {
-            return this.getRandomResponse(char.responses.hello);
-        } else if (this.containsWords(lowerMessage, ['고마', '감사', 'thank', '땡큐', 'ありがと', 'どうも'])) {
-            return this.getRandomResponse(char.responses.thanks);
-        } else if (this.containsWords(lowerMessage, ['안녕히', '바이', 'bye', '잘가', '가야', 'さようなら', 'また'])) {
-            return this.getRandomResponse(char.responses.goodbye);
-        } else if (this.containsWords(lowerMessage, ['예쁘', '멋지', '좋', '최고', '훌륭', '대단', 'すごい', 'きれい', 'いい'])) {
-            return this.getRandomResponse(char.responses.compliment);
-        } else if (this.containsWords(lowerMessage, ['날씨', 'weather', '비', '눈', '맑', '흐림', '天気', '雨', '雪'])) {
-            return this.getRandomResponse(char.responses.weather);
-        } else if (this.containsWords(lowerMessage, ['어디', 'where', '위치', '장소', '지금', 'now', 'どこ', '場所'])) {
-            return this.getRandomResponse(char.responses.location);
-        } else if (this.containsWords(lowerMessage, ['?', '궁금', '질문', '뭐', '어떻게', '왜', '언제', 'なに', 'なぜ', 'どう'])) {
-            return this.getRandomResponse(char.responses.question);
-        } else {
-            return this.getRandomResponse(char.responses.default);
-        }
-    }
-    
-    // 단어 포함 여부 확인
-    containsWords(text, words) {
-        return words.some(word => text.includes(word));
-    }
-    
-    // 랜덤 응답 선택
-    getRandomResponse(responses) {
-        return responses[Math.floor(Math.random() * responses.length)];
     }
     
     // 감정 분석 및 아바타 변경

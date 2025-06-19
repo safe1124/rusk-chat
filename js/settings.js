@@ -74,11 +74,12 @@ class SettingsManager {
 
     // 시스템 정보 업데이트
     async updateSystemInfo() {
-        // 백엔드 상태 (로컬 모드)
+        // 백엔드 상태
         const backendStatus = document.getElementById('backendStatus');
-        if (backendStatus) {
-            backendStatus.textContent = '🏠 로컬 모드 (Vercel 인증 우회)';
-            backendStatus.style.color = '#4CAF50';
+        if (backendStatus && window.backend) {
+            const status = await window.backend.checkBackendStatus();
+            backendStatus.textContent = status.message;
+            backendStatus.style.color = status.color;
         }
 
         // 현재 감정 상태 업데이트
