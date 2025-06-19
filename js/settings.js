@@ -87,8 +87,8 @@ class SettingsManager {
                     backendStatus.textContent = '✅ Vercel 백엔드 연결됨';
                     backendStatus.style.color = '#4CAF50';
                 } else {
-                    backendStatus.textContent = '❌ 백엔드 연결 실패';
-                    backendStatus.style.color = '#F44336';
+                    backendStatus.textContent = '⚠️ 백엔드 대기 중 (Fallback 가능)';
+                    backendStatus.style.color = '#FF9800';
                 }
             } catch (error) {
                 backendStatus.textContent = '⚠️ 연결 상태 불명';

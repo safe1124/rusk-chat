@@ -1,8 +1,8 @@
 // 백엔드 API 서비스 (간소화된 버전)
 class BackendService {
     constructor() {
-        // 실제 Vercel 배포 URL 사용
-        this.baseUrl = 'https://rusk-chat-9mch.vercel.app';
+        // environment.js에서 백엔드 URL 가져오기
+        this.baseUrl = envConfig.backendUrl;
         console.log(`백엔드 URL: ${this.baseUrl}`);
     }
     
