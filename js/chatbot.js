@@ -9,6 +9,7 @@ class Chatbot {
         this.initializeElements();
         this.bindEvents();
         this.loadWelcomeMessage();
+        this.addImageErrorHandling(); // 이미지 로딩 에러 처리 추가
     }
     
     // DOM 요소 초기화
@@ -372,6 +373,20 @@ class Chatbot {
                 </div>
             </div>
         `;
+    }
+    
+    // 이미지 로딩 에러 처리 추가
+    addImageErrorHandling() {
+        const images = document.querySelectorAll('img');
+        images.forEach(img => {
+            img.addEventListener('error', function() {
+                console.warn(`Image failed to load: ${this.src}`);
+                // fallback 이미지 설정
+                if (this.src.includes('chatbot/')) {
+                    this.src = 'images/default-avatar.png';
+                }
+            });
+        });
     }
 }
 
