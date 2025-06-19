@@ -25,7 +25,7 @@ export default async function handler(req, res) {
         if (!apiKey) {
             console.error('OpenAI APIキーが見つかりません');
             return res.status(500).json({ 
-                error: 'APIの設定エラー',
+                error: 'APの設定エラー',
                 response: "ごめんね〜 今AIの機能にちょっと問題があって… 少ししてからまた話してくれる？🥺"
             });
         }
