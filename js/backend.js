@@ -52,29 +52,24 @@ class BackendService {
     // 채팅 메시지 전송
     async sendMessage(messages) {
         try {
-            // messages 배열을 백엔드가 기대하는 구조로 변환
-            const history = messages.slice(0, -1).map(m => ({
-                sender: m.role,
-                message: m.content
-            }));
-            const message = messages[messages.length - 1]?.content || '';
-
-            console.log('API 호출 시작:', this.baseUrl);
+            // messages 배열을 그대로 전송 (ChatGPT 호환)
             const response = await fetch(`${this.baseUrl}/api/rusk`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ message, history })
+                body: JSON.stringify({ messages })
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error('백엔드 응답 오류:', errorData);
-                throw new Error(`서버 오류: ${response.status}`);
+                throw new Error(errorData.error || `서버 오류: ${response.status}`);
             }
 
-            return await response.json();
+            const data = await response.json();
+            // content 필드를 우선적으로 사용
+            return data.content || data.message || data.reply || data;
         } catch (error) {
             console.error('메시지 전송 실패:', error);
             throw error;

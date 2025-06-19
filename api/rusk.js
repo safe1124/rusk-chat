@@ -22,18 +22,14 @@ exports.handler = async function(event, context) {
     }
 
     try {
-        console.log('Received body:', event.body); // 요청 본문 로깅
-
-        const { message, history = [] } = JSON.parse(event.body);
-
-        if (!message) {
+        const { messages } = JSON.parse(event.body);
+        if (!messages || !Array.isArray(messages)) {
             return {
                 statusCode: 400,
                 headers,
-                body: JSON.stringify({ error: '메시지가 필요합니다' })
+                body: JSON.stringify({ error: 'messages 배열이 필요합니다' })
             };
         }
-
         const apiKey = process.env.OPENAI_API_KEY;
         if (!apiKey) {
             return {
@@ -42,37 +38,41 @@ exports.handler = async function(event, context) {
                 body: JSON.stringify({ error: 'API 설정 에러' })
             };
         }
-
-        // OpenAI API 호출 로직
-        const response = await fetch('https://api.openai.com/v1/completions', {
+        // OpenAI Chat API 호출
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                prompt: message,
-                max_tokens: 100,
+                model: 'gpt-3.5-turbo',
+                messages: messages,
+                max_tokens: 500,
                 temperature: 0.7
             })
         });
-
         const data = await response.json();
-
+        if (!response.ok) {
+            return {
+                statusCode: response.status,
+                headers,
+                body: JSON.stringify({ error: 'OpenAI API error', details: data })
+            };
+        }
         return {
             statusCode: 200,
             headers,
             body: JSON.stringify({
-                reply: data.choices[0].text,
-                history: [...history, { message, reply: data.choices[0].text }]
+                content: data.choices[0].message.content,
+                usage: data.usage
             })
         };
     } catch (error) {
-        console.error('Error occurred:', error.message); // 에러 메시지 로깅
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ error: 'Internal Server Error', details: error.message })
+            body: JSON.stringify({ error: 'Internal Server Error', message: error.message })
         };
     }
 };
