@@ -15,14 +15,14 @@ class CharacterManager {
                 dislikes: ['슬픈 이야기', '혼자 있는 시간', '복잡한 문제'],
                 speaking_style: '정중하면서도 친근한 말투, 일본어와 한국어를 자연스럽게 섞어 사용',
                 avatars: {
-                    happy: 'images/rask_happy.png',
-                    sad: 'images/rask_sad.png',
-                    excited: 'images/rask_excited.png',
-                    confused: 'images/rask_confused.png',
-                    angry: 'images/rask_angry.png',
-                    surprised: 'images/rask_surprised.png',
-                    shy: 'images/rask_shy.png',
-                    default: 'images/rask.png'
+                    happy: 'chatbot/happy.png',
+                    sad: 'chatbot/sad.png',
+                    excited: 'chatbot/happy.png',
+                    confused: 'chatbot/netural.png',
+                    angry: 'chatbot/angry.PNG',
+                    surprised: 'chatbot/odoroki.png',
+                    shy: 'chatbot/shy.png',
+                    default: 'chatbot/normal.png'
                 },
                 current_emotion: 'happy',
                 responses: {
