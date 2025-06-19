@@ -22,6 +22,8 @@ exports.handler = async function(event, context) {
     }
 
     try {
+        console.log('Received body:', event.body); // 요청 본문 로깅
+
         const { message, history = [] } = JSON.parse(event.body);
 
         if (!message) {
@@ -66,6 +68,7 @@ exports.handler = async function(event, context) {
             })
         };
     } catch (error) {
+        console.error('Error occurred:', error.message); // 에러 메시지 로깅
         return {
             statusCode: 500,
             headers,
