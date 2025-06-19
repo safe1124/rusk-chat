@@ -24,7 +24,7 @@ class Chatbot {
         this.characterName = document.getElementById('characterName');
         this.characterStatus = document.getElementById('characterStatus');
         if (this.characterStatus) {
-            this.characterStatus.textContent = '☁️ Vercel 백엔드 연결';
+            this.characterStatus.textContent = '☁️ Netlify 백엔드 연결';
         }
         this.attachmentBtn = document.getElementById('attachmentBtn');
         this.settingsBtn = document.getElementById('settingsBtn');

@@ -272,7 +272,7 @@ const utils = {
 // 네트워크 상태 모니터링
 window.addEventListener('online', () => {
     console.log('온라인 상태로 변경됨');
-    document.getElementById('characterStatus').textContent = '☁️ Vercel 백엔드 연결';
+    document.getElementById('characterStatus').textContent = '☁️ Netlify 백엔드 연결';
 });
 
 window.addEventListener('offline', () => {

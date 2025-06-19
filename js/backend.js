@@ -3,53 +3,48 @@ class BackendService {
     constructor() {
         // environment.js에서 백엔드 URL 가져오기
         this.baseUrl = envConfig.backendUrl;
-        this.isVercel = true; // 항상 Vercel 환경으로 간주
-        console.log(`백엔드 URL: ${this.baseUrl}, Vercel 연결: ${this.isVercel}`);
+        this.isNetlify = true; // Netlify 환경으로 간주
+        console.log(`백엔드 URL: ${this.baseUrl}, Netlify 연결: ${this.isNetlify}`);
     }
 
     // 백엔드 상태 확인
     async checkBackendStatus() {
-        if (!this.isVercel) {
-            // Vercel을 사용하지 않는 경우, 이 부분을 어떻게 처리할지 결정해야 합니다.
-            // 예를 들어, 항상 "연결 안됨"으로 표시하거나 다른 상태를 정의할 수 있습니다.
-            // 현재는 Vercel 백엔드만 지원하므로, isVercel이 false이면 연결 실패로 간주합니다.
+        if (!this.isNetlify) {
             return {
-                message: '❌ Vercel 백엔드 설정 필요',
-                color: '#F44336' // Red
+                message: '❌ Netlify 백엔드 설정 필요',
+                color: '#F44336'
             };
         }
-
         try {
-            // Vercel 백엔드의 상태 확인을 위해 간단한 요청 전송
+            // Netlify 백엔드의 상태 확인을 위해 간단한 요청 전송
             const response = await fetch(`${this.baseUrl}/api/rusk`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ messages: [{ role: 'user', content: 'ping' }] })
             });
-
             if (response.ok) {
                 const data = await response.json();
                 if (data.error && data.error.includes("API key")) {
                     return {
-                        message: '⚠️ Vercel 백엔드 연결됨 (API 키 문제)',
-                        color: '#FFD700' // Gold
+                        message: '⚠️ Netlify 백엔드 연결됨 (API 키 문제)',
+                        color: '#FFD700'
                     };
                 }
                 return {
-                    message: '☁️ Vercel 백엔드 연결됨',
-                    color: '#4CAF50' // Green
+                    message: '☁️ Netlify 백엔드 연결됨',
+                    color: '#4CAF50'
                 };
             } else {
                 return {
-                    message: `🔌 Vercel 백엔드 오류 (${response.status})`,
-                    color: '#F44336' // Red
+                    message: `🔌 Netlify 백엔드 오류 (${response.status})`,
+                    color: '#F44336'
                 };
             }
         } catch (error) {
-            console.error('Vercel 백엔드 연결 확인 실패:', error);
+            console.error('Netlify 백엔드 연결 확인 실패:', error);
             return {
-                message: '❌ Vercel 백엔드 연결 실패',
-                color: '#F44336' // Red
+                message: '❌ Netlify 백엔드 연결 실패',
+                color: '#F44336'
             };
         }
     }

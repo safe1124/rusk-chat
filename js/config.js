@@ -32,9 +32,9 @@ const apiConfig = new APIConfig();
 
 // 이미지 경로 관리 설정
 window.IMAGE_CONFIG = {
-    // Vercel과 로컬 환경 모두 지원
+    // Netlify와 로컬 환경 모두 지원
     getImagePath: function(imageName) {
-        // Vercel에서는 루트 경로에서 직접 접근
+        // Netlify에서는 루트 경로에서 직접 접근
         return '/' + imageName;
     }
 };
