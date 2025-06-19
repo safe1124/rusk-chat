@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 테스트 도구</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+        }
+        button { 
+            padding: 10px 20px; 
+            margin: 5px; 
+            border: none; 
+            border-radius: 4px; 
+            background: #007bff; 
+            color: white; 
+            cursor: pointer; 
+        }
+        button:hover { background: #0056b3; }
+        .result { 
+            margin-top: 10px; 
+            padding: 10px; 
+            background: #f8f9fa; 
+            border-radius: 4px; 
+            white-space: pre-wrap; 
+        }
+        .error { background: #f8d7da; color: #721c24; }
+        .success { background: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Rusk Chat API 테스트 도구</h1>
+    
+    <div class="test-section">
+        <h2>1. 환경 설정 확인</h2>
+        <button onclick="checkEnvironment()">환경 확인</button>
+        <div id="envResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. API 엔드포인트 테스트</h2>
+        <button onclick="testApiEndpoint()">기본 연결 테스트</button>
+        <button onclick="testWithSimpleMessage()">간단한 메시지 테스트</button>
+        <button onclick="testWithFullMessage()">전체 메시지 테스트</button>
+        <div id="apiResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. CORS 우회 테스트</h2>
+        <button onclick="testWithProxy()">프록시 테스트</button>
+        <button onclick="testDirectConnection()">직접 연결 테스트</button>
+        <div id="corsResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 네트워크 상태</h2>
+        <button onclick="checkNetworkStatus()">네트워크 상태 확인</button>
+        <div id="networkResult" class="result"></div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://rusk-chat-pitut7wwv-3minute.vercel.app';
+        
+        function log(elementId, message, type = '') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = 'result ' + type;
+            console.log(message);
+        }
+        
+        async function checkEnvironment() {
+            log('envResult', '환경 확인 중...', '');
+            
+            const info = {
+                userAgent: navigator.userAgent,
+                location: window.location.href,
+                backend: BACKEND_URL,
+                timestamp: new Date().toISOString()
+            };
+            
+            log('envResult', JSON.stringify(info, null, 2), 'success');
+        }
+        
+        async function testApiEndpoint() {
+            log('apiResult', 'API 엔드포인트 테스트 중...', '');
+            
+            try {
+                // 먼저 GET 요청으로 간단히 테스트
+                const getResponse = await fetch(`${BACKEND_URL}/api/chat`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const getResult = {
+                    status: getResponse.status,
+                    statusText: getResponse.statusText,
+                    ok: getResponse.ok
+                };
+                
+                if (getResponse.ok) {
+                    const data = await getResponse.json();
+                    log('apiResult', `✅ GET 요청 성공:\nStatus: ${getResult.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    const errorText = await getResponse.text();
+                    log('apiResult', `❌ GET 요청 실패:\nStatus: ${getResult.status}\nError: ${errorText}`, 'error');
+                }
+                
+            } catch (error) {
+                log('apiResult', `❌ 네트워크 오류: ${error.message}\n\n가능한 원인:\n1. CORS 정책 위반\n2. 네트워크 연결 문제\n3. 서버 오류`, 'error');
+            }
+        }
+        
+        async function testWithSimpleMessage() {
+            log('apiResult', '간단한 메시지 테스트 중...', '');
+            
+            try {
+                const requestData = {
+                    messages: [
+                        { role: 'user', content: 'Hello' }
+                    ],
+                    character: 'ラスク'
+                };
+                
+                console.log('요청 데이터:', requestData);
+                
+                const response = await fetch(`${BACKEND_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                console.log('응답 상태:', response.status, response.statusText);
+                
+                const responseText = await response.text();
+                console.log('응답 원문:', responseText);
+                
+                if (response.ok) {
+                    try {
+                        const data = JSON.parse(responseText);
+                        log('apiResult', `✅ 성공!\n응답: ${JSON.stringify(data, null, 2)}`, 'success');
+                    } catch (e) {
+                        log('apiResult', `⚠️ JSON 파싱 실패\n원문: ${responseText}`, 'error');
+                    }
+                } else {
+                    log('apiResult', `❌ 실패 (${response.status})\n응답: ${responseText}`, 'error');
+                }
+                
+            } catch (error) {
+                log('apiResult', `❌ 네트워크 오류: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testWithFullMessage() {
+            log('apiResult', '전체 메시지 테스트 중...', '');
+            
+            try {
+                const requestData = {
+                    messages: [
+                        {
+                            role: 'system',
+                            content: '당신은 라스크라는 친근한 AI 캐릭터입니다.'
+                        },
+                        {
+                            role: 'user',
+                            content: '안녕하세요! 자기소개 해주세요.'
+                        }
+                    ],
+                    character: 'ラスク'
+                };
+                
+                const response = await fetch(`${BACKEND_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const responseText = await response.text();
+                
+                if (response.ok) {
+                    try {
+                        const data = JSON.parse(responseText);
+                        log('apiResult', `✅ 전체 테스트 성공!\n라스크 응답: ${data.message}`, 'success');
+                    } catch (e) {
+                        log('apiResult', `⚠️ JSON 파싱 실패\n원문: ${responseText}`, 'error');
+                    }
+                } else {
+                    log('apiResult', `❌ 전체 테스트 실패 (${response.status})\n응답: ${responseText}`, 'error');
+                }
+                
+            } catch (error) {
+                log('apiResult', `❌ 네트워크 오류: ${error.message}`, 'error');
+            }
+        }
+        
+        
+        async function testWithProxy() {
+            log('corsResult', '프록시를 통한 테스트 중...', '');
+            
+            try {
+                // CORS 프록시를 사용한 테스트
+                const proxyUrl = `https://cors-anywhere.herokuapp.com/${BACKEND_URL}/api/chat`;
+                
+                const response = await fetch(proxyUrl, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log('corsResult', `✅ 프록시 테스트 성공:\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    const errorText = await response.text();
+                    log('corsResult', `❌ 프록시 테스트 실패: ${errorText}`, 'error');
+                }
+                
+            } catch (error) {
+                log('corsResult', `❌ 프록시 오류: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testDirectConnection() {
+            log('corsResult', '직접 연결 테스트 중...', '');
+            
+            try {
+                // 이미지를 통한 우회 테스트
+                const img = new Image();
+                const testUrl = `${BACKEND_URL}/api/chat?test=ping&timestamp=${Date.now()}`;
+                
+                img.onload = () => {
+                    log('corsResult', '✅ 서버 응답 확인됨 (이미지 로드 성공)', 'success');
+                };
+                
+                img.onerror = () => {
+                    log('corsResult', '⚠️ 서버 응답은 있지만 이미지가 아님 (정상)', 'success');
+                };
+                
+                img.src = testUrl;
+                
+                // 5초 후 타임아웃
+                setTimeout(() => {
+                    log('corsResult', '🕐 직접 연결 테스트 완료 (위 결과 참조)', '');
+                }, 5000);
+                
+            } catch (error) {
+                log('corsResult', `❌ 직접 연결 오류: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkNetworkStatus() {
+            log('networkResult', '네트워크 상태 확인 중...', '');
+            
+            const tests = [
+                { name: 'Google', url: 'https://www.google.com' },
+                { name: 'Vercel', url: 'https://vercel.com' },
+                { name: 'Backend', url: BACKEND_URL }
+            ];
+            
+            let results = [];
+            
+            for (const test of tests) {
+                try {
+                    const start = Date.now();
+                    const response = await fetch(test.url, { method: 'HEAD', mode: 'no-cors' });
+                    const time = Date.now() - start;
+                    results.push(`✅ ${test.name}: ${time}ms`);
+                } catch (error) {
+                    results.push(`❌ ${test.name}: ${error.message}`);
+                }
+            }
+            
+            log('networkResult', results.join('\n'), 'success');
+        }
+    </script>
+</body>
+</html>

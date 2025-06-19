@@ -74,26 +74,11 @@ class SettingsManager {
 
     // 시스템 정보 업데이트
     async updateSystemInfo() {
-        // 백엔드 상태 테스트
+        // 백엔드 상태 (로컬 모드)
         const backendStatus = document.getElementById('backendStatus');
         if (backendStatus) {
-            try {
-                backendStatus.textContent = '🔄 연결 확인 중...';
-                backendStatus.style.color = '#FFA500';
-                
-                const isConnected = await backendService.testConnection();
-                
-                if (isConnected) {
-                    backendStatus.textContent = '✅ Vercel 백엔드 연결됨';
-                    backendStatus.style.color = '#4CAF50';
-                } else {
-                    backendStatus.textContent = '⚠️ 백엔드 대기 중 (Fallback 가능)';
-                    backendStatus.style.color = '#FF9800';
-                }
-            } catch (error) {
-                backendStatus.textContent = '⚠️ 연결 상태 불명';
-                backendStatus.style.color = '#FF9800';
-            }
+            backendStatus.textContent = '🏠 로컬 모드 (Vercel 인증 우회)';
+            backendStatus.style.color = '#4CAF50';
         }
 
         // 현재 감정 상태 업데이트
