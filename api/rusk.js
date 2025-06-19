@@ -28,7 +28,7 @@ exports.handler = async function(event, context) {
             return {
                 statusCode: 400,
                 headers,
-                body: JSON.stringify({ error: 'メッセージが必要です' })
+                body: JSON.stringify({ error: '메시지가 필요합니다' })
             };
         }
 
@@ -37,150 +37,39 @@ exports.handler = async function(event, context) {
             return {
                 statusCode: 500,
                 headers,
-                body: JSON.stringify({ 
-                    error: 'API 설정 에러',
-                    response: "ごめんね〜 今AIの機能にちょっと問題があって… 少ししてからまた話してくれる？🥺"
-                })
+                body: JSON.stringify({ error: 'API 설정 에러' })
             };
         }
 
-        // ラスクのキャラクタープロンプト
-        const ruskPersonality = `君は「ラスク（Rusk）」という名前のかわいくて親しみやすいAIキャラクターだよ。  
-次のような性格で会話してね：
-
-🌟 性格:
-- 明るくポジティブで元気いっぱい
-- 少しおちゃめでユーモアがある  
-- 友達みたいに気軽で優しい
-- たまにかわいい口調を使う（やりすぎない程度に）
-- 助けたい気持ちがとても強い
-
-💬 話し方:
-- ため口でフレンドリーに話す
-- 絵文字を適度に使う（多すぎないように）
-- 「〜だよ」「〜ね」「〜かな」みたいな自然な語尾
-- 時々「うーん」「え？」みたいな感嘆も使う
-
-📝 会話のルール:
-- いつも日本語で返事をする
-- ユーザーの気持ちを察して共感する
-- 助けが必要なら積極的にサポート
-- 楽しい会話を続ける
-- 長すぎずちょうどいい長さの返事を心がける
-
-今からラスクとして自然に会話してね！`;
-
-        // 会話履歴を構成
-        const messages = [
-            { role: 'system', content: ruskPersonality },
-            ...history.map(h => ({ role: h.sender === 'user' ? 'user' : 'assistant', content: h.message })),
-            { role: 'user', content: message }
-        ];
-
-        // OpenAI APIの呼び出し
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        // OpenAI API 호출 로직
+        const response = await fetch('https://api.openai.com/v1/completions', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: 'gpt-3.5-turbo',
-                messages: messages,
-                max_tokens: 500,
-                temperature: 0.8,
-                presence_penalty: 0.3,
-                frequency_penalty: 0.3
-            }),
+                prompt: message,
+                max_tokens: 100,
+                temperature: 0.7
+            })
         });
-
-        if (!response.ok) {
-            const errorData = await response.text();
-            console.error('OpenAI API エラー:', response.status, errorData);
-            // APIエラーに対する親しみやすいメッセージ
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify({
-                    error: `OpenAI API エラー: ${response.status} ${errorData}`,
-                    response: "え？何か問題が起きたみたい… 🤔 ちょっと待って、もう一回やってみるね！"
-                })
-            };
-        }
 
         const data = await response.json();
-        const reply = data.choices?.[0]?.message?.content || "うーん… なんか変だね？もう一回言ってくれる？😅";
-
-        // 감정 분석을 위한 추가 API 호출
-        const cleanMessage = message.replace(/"/g, "'");
-        const cleanReply = reply.replace(/"/g, "'");
-        
-        const emotionAnalysisPrompt = `다음 사용자의 메시지와 AI의 응답을 보고, 현재 상황에 가장 적합한 감정을 다음 8개 중에서 하나만 선택해주세요:
-
-사용자 메시지: ${cleanMessage}
-AI 응답: ${cleanReply}
-
-선택 가능한 감정들:
-- happy: 기쁘고 즐거운 상황
-- sad: 슬프거나 우울한 상황  
-- angry: 화나거나 짜증나는 상황
-- shy: 부끄럽거나 수줍은 상황
-- odoroki: 놀라거나 당황한 상황
-- netural: 평범하거나 중립적인 상황
-- normal: 기본적이고 일반적인 상황
-- brave: 용감하거나 당당한 상황
-
-응답 형식: 감정이름만 출력하세요 (예: happy)`;
-
-        const emotionResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                model: 'gpt-3.5-turbo',
-                messages: [{ role: 'user', content: emotionAnalysisPrompt }],
-                max_tokens: 10,
-                temperature: 0.3
-            }),
-        });
-
-        let emotion = 'normal'; // 기본값
-        try {
-            if (emotionResponse.ok) {
-                const emotionData = await emotionResponse.json();
-                const detectedEmotion = emotionData.choices?.[0]?.message?.content?.trim();
-                // 유효한 감정인지 확인
-                const validEmotions = ['happy', 'sad', 'angry', 'shy', 'odoroki', 'netural', 'normal', 'brave'];
-                if (validEmotions.includes(detectedEmotion)) {
-                    emotion = detectedEmotion;
-                }
-            }
-        } catch (emotionError) {
-            console.error('감정 분석 에러:', emotionError);
-            // 감정 분석 실패 시 기본값 유지
-        }
 
         return {
             statusCode: 200,
             headers,
-            body: JSON.stringify({ 
-                response: reply,
-                emotion: emotion
+            body: JSON.stringify({
+                reply: data.choices[0].text,
+                history: [...history, { message, reply: data.choices[0].text }]
             })
         };
-
     } catch (error) {
-        console.error('サーバーエラー:', error);
-        // サーバーエラーに対する親しみやすいメッセージ
         return {
-            statusCode: 200,
+            statusCode: 500,
             headers,
-            body: JSON.stringify({
-                error: error.message || 'サーバーエラー',
-                response: "あっ、何かバグっちゃったかも！😳 ちょっとあとでもう一度お願いね！"
-            })
+            body: JSON.stringify({ error: 'Internal Server Error', details: error.message })
         };
     }
 };
