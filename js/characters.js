@@ -26,12 +26,48 @@ class CharacterManager {
                 },
                 current_emotion: 'happy',
                 responses: {
-                    hello: ['こんにちは！元気ですか？ 🌟', 'はじめまして！よろしくお願いします！', 'こんにちは！今日もいい日ですね！'],
-                    thanks: ['どういたしまして！いつでも聞いてくださいね 💕', 'お役に立てて嬉しいです！', 'いえいえ、また何でも聞いてください！'],
-                    goodbye: ['さようなら！また会いましょう 👋', 'いい一日を過ごしてくださいね！', 'またいつでも来てくださいね！'],
-                    compliment: ['ありがとうございます！あなたも素敵ですよ！ ✨', 'そんな風に言ってもらえて嬉しいです！', 'わあ！そう言ってもらえると元気が出ます！'],
-                    question: ['面白い質問ですね！ 🤔', 'いい質問です！', '考えてみる価値がありますね'],
-                    default: ['そうですね！もう少し詳しく教えてもらえますか？', '興味深いですね！どう思いますか？', 'なるほど！もっと聞かせてください！']
+                    hello: [
+                        'こんにちは！오늘 기분은 어때요? 😊', 
+                        'はじめまして！ラスクです~ よろしくお願いします！ ✨', 
+                        'こんにちは！좋은 하루 보내고 계신가요? 🌟'
+                    ],
+                    thanks: [
+                        'どういたしまして！도움이 되어서 기뻐요~ 💕', 
+                        'いえいえ！언제든지 말해주세요! �', 
+                        'お役に立てて良かったです！또 궁금한 거 있으면 물어보세요 ✨'
+                    ],
+                    goodbye: [
+                        'さようなら！또 만나요~ 👋', 
+                        '좋은 하루 되세요！またね！ 😊', 
+                        '또 이야기해요！元気でいてくださいね 💕'
+                    ],
+                    compliment: [
+                        'わあ！고마워요~ 당신도 정말 멋져요! ✨', 
+                        'そんなこと言ってもらえて嬉しいです！ 😊', 
+                        'ありがとうございます！기분이 좋아져요 💕'
+                    ],
+                    question: [
+                        '좋은 질문이네요！えーっと... 🤔', 
+                        '재미있는 이야기네요！더 들려주세요 ✨', 
+                        'そうですね！어떻게 생각하세요? 😊'
+                    ],
+                    weather: [
+                        '오늘 날씨는 어때요？いい天気だといいですね! ☀️',
+                        '날씨 이야기는 항상 좋아해요！どんな날でも素敵ですね 🌤️',
+                        'そうですね！날씨에 따라 기분도 달라지죠~ 😊'
+                    ],
+                    location: [
+                        'えーっと！어디에 계신지 궁금해요 🗺️',
+                        '그곳은 어떤 곳인가요？좋은 곳이겠네요! ✨',
+                        'そうですね！저도 여러 곳을 가보고 싶어요 😊'
+                    ],
+                    default: [
+                        'そうですね！더 자세히 말해주세요~ 😊', 
+                        '재미있어요！どう思いますか? ✨', 
+                        'なるほど！もっと聞かせてください! 🌟',
+                        'えーっと... 좀 더 설명해주실래요? 😅',
+                        'わかりました！어떤 이야기인지 궁금해요 💕'
+                    ]
                 }
             }
         ];
@@ -92,6 +128,10 @@ class CharacterManager {
             return this.getRandomResponse(char.responses.goodbye);
         } else if (this.containsWords(lowerMessage, ['예쁘', '멋지', '좋', '최고', '훌륭', '대단', 'すごい', 'きれい', 'いい'])) {
             return this.getRandomResponse(char.responses.compliment);
+        } else if (this.containsWords(lowerMessage, ['날씨', 'weather', '비', '눈', '맑', '흐림', '天気', '雨', '雪'])) {
+            return this.getRandomResponse(char.responses.weather);
+        } else if (this.containsWords(lowerMessage, ['어디', 'where', '위치', '장소', '지금', 'now', 'どこ', '場所'])) {
+            return this.getRandomResponse(char.responses.location);
         } else if (this.containsWords(lowerMessage, ['?', '궁금', '질문', '뭐', '어떻게', '왜', '언제', 'なに', 'なぜ', 'どう'])) {
             return this.getRandomResponse(char.responses.question);
         } else {
