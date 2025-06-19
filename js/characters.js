@@ -15,14 +15,14 @@ class CharacterManager {
                 dislikes: ['슬픈 이야기', '혼자 있는 시간', '복잡한 문제'],
                 speaking_style: '정중하면서도 친근한 말투, 일본어와 한국어를 자연스럽게 섞어 사용',
                 avatars: {
-                    happy: 'chatbot/happy.png',
-                    sad: 'chatbot/sad.png',
-                    excited: 'chatbot/happy.png',
-                    confused: 'chatbot/netural.png',
-                    angry: 'chatbot/angry.PNG',
-                    surprised: 'chatbot/odoroki.png',
-                    shy: 'chatbot/shy.png',
-                    default: 'chatbot/happy.png'
+                    happy: 'Public/happy.png',
+                    sad: 'Public/sad.png',
+                    excited: 'Public/happy.png',
+                    confused: 'Public/netural.png',
+                    angry: 'Public/angry.PNG',
+                    surprised: 'Public/odoroki.png',
+                    shy: 'Public/shy.png',
+                    default: 'Public/happy.png'
                 },
                 current_emotion: 'happy',
                 responses: {
@@ -244,17 +244,17 @@ class CharacterManager {
     // 감정에 맞는 이미지 경로 반환
     getEmotionImage(emotion) {
         const validEmotions = {
-            'happy': 'chatbot/happy.png',
-            'sad': 'chatbot/sad.png',
-            'angry': 'chatbot/angry.PNG',
-            'shy': 'chatbot/shy.png',
-            'odoroki': 'chatbot/odoroki.png',
-            'netural': 'chatbot/netural.png',
-            'normal': 'chatbot/normal.png',
-            'brave': 'chatbot/brave.png'
+            'happy': 'Public/happy.png',
+            'sad': 'Public/sad.png',
+            'angry': 'Public/angry.PNG',
+            'shy': 'Public/shy.png',
+            'odoroki': 'Public/odoroki.png',
+            'netural': 'Public/netural.png',
+            'normal': 'Public/normal.png',
+            'brave': 'Public/brave.png'
         };
         
-        return validEmotions[emotion] || 'chatbot/normal.png';
+        return validEmotions[emotion] || 'Public/normal.png';
     }
     
     // 현재 감정 표시 업데이트
