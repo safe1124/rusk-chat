@@ -15,14 +15,14 @@ class CharacterManager {
                 dislikes: ['슬픈 이야기', '혼자 있는 시간', '복잡한 문제'],
                 speaking_style: '정중하면서도 친근한 말투, 일본어와 한국어를 자연스럽게 섞어 사용',
                 avatars: {
-                    happy: 'Public/happy.png',
-                    sad: 'Public/sad.png',
-                    excited: 'Public/happy.png',
-                    confused: 'Public/netural.png',
-                    angry: 'Public/angry.PNG',
-                    surprised: 'Public/odoroki.png',
-                    shy: 'Public/shy.png',
-                    default: 'Public/happy.png'
+                    happy: '/happy.png',
+                    sad: '/sad.png',
+                    excited: '/happy.png',
+                    confused: '/netural.png',
+                    angry: '/angry.PNG',
+                    surprised: '/odoroki.png',
+                    shy: '/shy.png',
+                    default: '/happy.png'
                 },
                 current_emotion: 'happy',
                 responses: {
@@ -244,17 +244,17 @@ class CharacterManager {
     // 감정에 맞는 이미지 경로 반환
     getEmotionImage(emotion) {
         const validEmotions = {
-            'happy': 'Public/happy.png',
-            'sad': 'Public/sad.png',
-            'angry': 'Public/angry.PNG',
-            'shy': 'Public/shy.png',
-            'odoroki': 'Public/odoroki.png',
-            'netural': 'Public/netural.png',
-            'normal': 'Public/normal.png',
-            'brave': 'Public/brave.png'
+            'happy': '/happy.png',
+            'sad': '/sad.png',
+            'angry': '/angry.PNG',
+            'shy': '/shy.png',
+            'odoroki': '/odoroki.png',
+            'netural': '/netural.png',
+            'normal': '/normal.png',
+            'brave': '/brave.png'
         };
         
-        return validEmotions[emotion] || 'Public/normal.png';
+        return validEmotions[emotion] || '/normal.png';
     }
     
     // 현재 감정 표시 업데이트
