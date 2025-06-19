@@ -53,57 +53,20 @@ class OpenAIService {
                 requestData: requestData
             });
             
-            const response = await fetch(`${backendService.baseUrl}/api/chat`, {
+            const response = await fetch(`/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(requestData)
             });
-            
-            console.log('백엔드 응답 상태:', {
-                status: response.status,
-                statusText: response.statusText,
-                ok: response.ok,
-                headers: Object.fromEntries(response.headers.entries())
-            });
-             if (!response.ok) {
-                let errorData;
-                const responseText = await response.text();
-                console.log('응답 원문:', responseText);
-                
-                try {
-                    errorData = JSON.parse(responseText);
-                } catch (e) {
-                    errorData = { error: 'Invalid JSON response', responseText: responseText };
-                }
-                
-                console.error('백엔드 API 오류 응답:', {
-                    status: response.status,
-                    statusText: response.statusText,
-                    errorData: errorData,
-                    responseText: responseText
-                });
-                throw new Error(`백엔드 API 오류: ${errorData.error || response.statusText}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'API 호출 실패');
             }
-
-            const responseText = await response.text();
-            console.log('응답 원문:', responseText);
-            
-            let data;
-            try {
-                data = JSON.parse(responseText);
-            } catch (e) {
-                console.error('JSON 파싱 오류:', e, '응답:', responseText);
-                throw new Error('응답 파싱 실패');
-            }
-            
-            console.log('백엔드 응답 데이터:', data);
-            
-            const finalResponse = data.message || data.choices?.[0]?.message?.content || '응답을 받을 수 없습니다.';
-            console.log('최종 응답:', finalResponse);
-            
-            return finalResponse;
+            const data = await response.json();
+            // chat.js의 응답 구조에 맞게 파싱
+            return data.message || data.reply || '응답 없음';
             
         } catch (error) {
             console.error('백엔드 API 호출 실패:', error);

@@ -2,7 +2,7 @@
 class EnvironmentConfig {
     constructor() {
         this.isProduction = this.checkProductionEnvironment();
-        // 현재 도메인을 백엔드 URL로 사용 (Vercel 자동 배포)
+        // 현재 도메인을 백엔드 URL로 사용 (Netlify 자동 배포)
         this.backendUrl = window.location.origin;
     }
     
