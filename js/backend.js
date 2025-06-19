@@ -1,8 +1,10 @@
 // 백엔드 API 서비스 (안전한 API 키 관리)
 class BackendService {
     constructor() {
-        this.baseUrl = envConfig.backendUrl;
-        this.sessionToken = null;
+        // Vercel 배포 URL을 기본값으로 설정 (배포 후 실제 URL로 변경 필요)
+        this.baseUrl = envConfig.backendUrl || 'https://your-backend-project.vercel.app';
+        this.sessionToken = 'default-session'; // 기본 세션 토큰
+        console.log(`백엔드 URL: ${this.baseUrl}`);
     }
     
     // 사용자 세션 생성 (임시 토큰 방식)

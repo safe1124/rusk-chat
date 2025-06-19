@@ -5,12 +5,8 @@ class OpenAIService {
         this.maxHistoryLength = 10; // 대화 기록 최대 길이
     }
     
-    // 채팅 완성 API 호출
+    // 채팅 완성 API 호출 (항상 백엔드 사용)
     async generateResponse(userMessage, character) {
-        if (!apiConfig.isReady()) {
-            throw new Error('API가 설정되지 않았습니다.');
-        }
-        
         try {
             // 시스템 메시지 생성 (캐릭터 설정)
             const systemMessage = this.createSystemMessage(character);
@@ -24,14 +20,8 @@ class OpenAIService {
                 ...this.conversationHistory.slice(-this.maxHistoryLength)
             ];
             
-            let response;
-            
-            // 백엔드 사용 여부에 따라 API 호출 방식 결정
-            if (apiConfig.shouldUseBackend()) {
-                response = await this.callBackendAPI(messages, character);
-            } else {
-                response = await this.callDirectAPI(messages);
-            }
+            // 백엔드 API를 통해 응답 생성
+            const response = await this.callBackendAPI(messages, character);
             
             // 대화 기록에 어시스턴트 응답 추가
             this.addToHistory('assistant', response);

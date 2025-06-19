@@ -63,23 +63,17 @@ class CharacterManager {
     getCharacterById(id) {
         return this.characters.find(char => char.id === id);
     }
-     // 캐릭터의 응답 생성
+     // 캐릭터의 응답 생성 (항상 백엔드 API 사용)
     async generateResponse(message) {
         const char = this.currentCharacter;
         
-        // OpenAI API 사용 가능한지 확인
-        if (apiConfig.isReady()) {
-            try {
-                // 실제 AI API 호출
-                const response = await openaiService.generateResponse(message, char);
-                return response;
-            } catch (error) {
-                console.error('AI API 호출 실패:', error);
-                // API 실패 시 기본 응답으로 폴백
-                return this.getLocalResponse(message);
-            }
-        } else {
-            // API 키가 없을 때 기본 응답 사용
+        try {
+            // 백엔드 API를 통한 AI 응답 생성
+            const response = await openaiService.generateResponse(message, char);
+            return response;
+        } catch (error) {
+            console.error('AI API 호출 실패:', error);
+            // API 실패 시 기본 응답으로 폴백
             return this.getLocalResponse(message);
         }
     }
