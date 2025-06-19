@@ -104,13 +104,19 @@ class CharacterManager {
         const char = this.currentCharacter;
         
         try {
+            console.log('캐릭터 응답 생성 시작:', message);
+            
             // 백엔드 API를 통한 AI 응답 생성
             const response = await openaiService.generateResponse(message, char);
+            
+            console.log('생성된 응답:', response);
             return response;
+            
         } catch (error) {
             console.error('백엔드 API 호출 실패:', error);
-            // 백엔드 실패 시에만 임시로 기본 응답 사용
-            return `죄송해요, 지금 서버에 문제가 있는 것 같아요. 😅 잠시 후 다시 시도해주세요!`;
+            
+            // 백엔드 실패 시 라스크다운 로컬 응답 (최후의 수단)
+            return this.getLocalResponse(message);
         }
     }
     
