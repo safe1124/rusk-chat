@@ -18,8 +18,8 @@ class CharacterManager {
                     happy: window.IMAGE_CONFIG?.getImagePath('happy.png') || '/happy.png',
                     sad: window.IMAGE_CONFIG?.getImagePath('sad.png') || '/sad.png',
                     excited: window.IMAGE_CONFIG?.getImagePath('happy.png') || '/happy.png',
-                    confused: window.IMAGE_CONFIG?.getImagePath('netural.png') || '/netural.png',
-                    angry: window.IMAGE_CONFIG?.getImagePath('angry.PNG') || '/angry.PNG',
+                    confused: window.IMAGE_CONFIG?.getImagePath('neutral.png') || '/neutral.png',
+                    angry: window.IMAGE_CONFIG?.getImagePath('angry.png') || '/angry.png',
                     surprised: window.IMAGE_CONFIG?.getImagePath('odoroki.png') || '/odoroki.png',
                     shy: window.IMAGE_CONFIG?.getImagePath('shy.png') || '/shy.png',
                     default: window.IMAGE_CONFIG?.getImagePath('happy.png') || '/happy.png'
@@ -247,7 +247,7 @@ class CharacterManager {
         const validEmotions = {
             'happy': getPath('happy.png'),
             'sad': getPath('sad.png'),
-            'angry': getPath('angry.PNG'),
+            'angry': getPath('angry.png'),
             'shy': getPath('shy.png'),
             'odoroki': getPath('odoroki.png'),
             'netural': getPath('netural.png'),
