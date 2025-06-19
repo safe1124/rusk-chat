@@ -22,7 +22,7 @@ class CharacterManager {
                     angry: 'chatbot/angry.PNG',
                     surprised: 'chatbot/odoroki.png',
                     shy: 'chatbot/shy.png',
-                    default: 'chatbot/happy.png'
+                    default: 'chatbot/normal.png'
                 },
                 current_emotion: 'happy',
                 responses: {
