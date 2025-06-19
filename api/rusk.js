@@ -1,33 +1,47 @@
-export default async function handler(req, res) {
-    // CORS設定（最上部に配置）
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+exports.handler = async function(event, context) {
+    const headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+    };
 
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers,
+            body: ''
+        };
     }
 
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: '許可されていないメソッドです' });
+    if (event.httpMethod !== 'POST') {
+        return {
+            statusCode: 405,
+            headers,
+            body: JSON.stringify({ error: '허용되지 않은 메소드입니다' })
+        };
     }
 
     try {
-        const { message, history = [] } = req.body;
+        const { message, history = [] } = JSON.parse(event.body);
 
         if (!message) {
-            return res.status(400).json({ error: 'メッセージが必要です' });
+            return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({ error: 'メッセージが必要です' })
+            };
         }
 
-        // OpenAI APIキーの確認
         const apiKey = process.env.OPENAI_API_KEY;
         if (!apiKey) {
-            console.error('OpenAI APIキーが見つかりません');
-            return res.status(500).json({ 
-                error: 'APの設定エラー',
-                response: "ごめんね〜 今AIの機能にちょっと問題があって… 少ししてからまた話してくれる？🥺"
-            });
+            return {
+                statusCode: 500,
+                headers,
+                body: JSON.stringify({ 
+                    error: 'API 설정 에러',
+                    response: "ごめんね〜 今AIの機能にちょっと問題があって… 少ししてからまた話してくれる？🥺"
+                })
+            };
         }
 
         // ラスクのキャラクタープロンプト
@@ -84,10 +98,14 @@ export default async function handler(req, res) {
             const errorData = await response.text();
             console.error('OpenAI API エラー:', response.status, errorData);
             // APIエラーに対する親しみやすいメッセージ
-            return res.status(200).json({
-                error: `OpenAI API エラー: ${response.status} ${errorData}`,
-                response: "え？何か問題が起きたみたい… 🤔 ちょっと待って、もう一回やってみるね！"
-            });
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({
+                    error: `OpenAI API エラー: ${response.status} ${errorData}`,
+                    response: "え？何か問題が起きたみたい… 🤔 ちょっと待って、もう一回やってみるね！"
+                })
+            };
         }
 
         const data = await response.json();
@@ -144,17 +162,25 @@ AI 응답: ${cleanReply}
             // 감정 분석 실패 시 기본값 유지
         }
 
-        res.status(200).json({ 
-            response: reply,
-            emotion: emotion
-        });
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({ 
+                response: reply,
+                emotion: emotion
+            })
+        };
 
     } catch (error) {
         console.error('サーバーエラー:', error);
         // サーバーエラーに対する親しみやすいメッセージ
-        res.status(200).json({
-            error: error.message || 'サーバーエラー',
-            response: "あっ、何かバグっちゃったかも！😳 ちょっとあとでもう一度お願いね！"
-        });
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({
+                error: error.message || 'サーバーエラー',
+                response: "あっ、何かバグっちゃったかも！😳 ちょっとあとでもう一度お願いね！"
+            })
+        };
     }
-}
+};
