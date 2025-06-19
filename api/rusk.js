@@ -93,7 +93,53 @@ export default async function handler(req, res) {
         const data = await response.json();
         const reply = data.choices?.[0]?.message?.content || "うーん… なんか変だね？もう一回言ってくれる？😅";
 
-        res.status(200).json({ response: reply });
+        // 감정 분석을 위한 추가 API 호출
+        const emotionAnalysisPrompt = `다음 사용자의 메시지와 AI의 응답을 보고, 현재 상황에 가장 적합한 감정을 다음 8개 중에서 하나만 선택해주세요:
+
+사용자 메시지: "${message}"
+AI 응답: "${reply}"
+
+선택 가능한 감정들:
+- happy: 기쁘고 즐거운 상황
+- sad: 슬프거나 우울한 상황  
+- angry: 화나거나 짜증나는 상황
+- shy: 부끄럽거나 수줍은 상황
+- odoroki: 놀라거나 당황한 상황
+- netural: 평범하거나 중립적인 상황
+- normal: 기본적이고 일반적인 상황
+- brave: 용감하거나 당당한 상황
+
+응답 형식: 감정이름만 출력하세요 (예: happy)`;
+
+        const emotionResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                model: 'gpt-3.5-turbo',
+                messages: [{ role: 'user', content: emotionAnalysisPrompt }],
+                max_tokens: 10,
+                temperature: 0.3
+            }),
+        });
+
+        let emotion = 'normal'; // 기본값
+        if (emotionResponse.ok) {
+            const emotionData = await emotionResponse.json();
+            const detectedEmotion = emotionData.choices?.[0]?.message?.content?.trim();
+            // 유효한 감정인지 확인
+            const validEmotions = ['happy', 'sad', 'angry', 'shy', 'odoroki', 'netural', 'normal', 'brave'];
+            if (validEmotions.includes(detectedEmotion)) {
+                emotion = detectedEmotion;
+            }
+        }
+
+        res.status(200).json({ 
+            response: reply,
+            emotion: emotion
+        });
 
     } catch (error) {
         console.error('サーバーエラー:', error);

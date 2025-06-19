@@ -8,7 +8,7 @@ class OpenAIService {
      * 백엔드 API를 통해 AI 응답을 생성합니다.
      * @param {string} userMessage - 사용자 메시지
      * @param {object} character - 현재 캐릭터 정보 (백엔드에서 컨텍스트에 사용)
-     * @returns {Promise<string>} AI 응답 메시지
+     * @returns {Promise<object>} AI 응답과 감정 정보를 포함한 객체
      */
     async generateResponse(userMessage, character) {
         this.history.push({ role: 'user', content: userMessage });
@@ -18,6 +18,8 @@ class OpenAIService {
             const response = await window.backend.sendMessage(this.history);
             // 응답 구조가 response.content 또는 response.response일 수 있음
             const reply = response.content || response.response;
+            const emotion = response.emotion || 'normal'; // 감정 정보 추출
+            
             if (reply) {
                 this.history.push({ role: 'assistant', content: reply });
                 
@@ -25,7 +27,11 @@ class OpenAIService {
                 if (this.history.length > 20) {
                     this.history = this.history.slice(-20);
                 }
-                return reply;
+                
+                return { 
+                    message: reply,
+                    emotion: emotion 
+                };
             } else {
                 const errorMessage = response.error || '백엔드로부터 유효한 응답을 받지 못했습니다.';
                 throw new Error(errorMessage);

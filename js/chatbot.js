@@ -292,15 +292,30 @@ class Chatbot {
             // 캐릭터 매니저를 통해 응답 생성 (이제 비동기)
             const response = await characterManager.generateResponse(userMessage);
             
+            // response가 객체인지 문자열인지 확인
+            let message, emotion;
+            if (typeof response === 'object' && response.message) {
+                message = response.message;
+                emotion = response.emotion || 'normal';
+            } else {
+                message = response;
+                emotion = 'normal';
+            }
+            
             // 타이핑 지연 시뮬레이션
             const delay = Math.min(
-                this.typingDelay + (response.length * 30),
+                this.typingDelay + (message.length * 30),
                 this.maxTypingDelay
             );
             
             setTimeout(() => {
                 this.hideTypingIndicator();
-                this.addMessage('bot', response);
+                this.addMessage('bot', message);
+                
+                // 감정에 따른 아바타 변경 (1초간 표시)
+                if (emotion && emotion !== 'normal') {
+                    characterManager.showEmotionAvatar(emotion);
+                }
                 
                 // 감정에 따른 아바타 변경 후 UI 업데이트
                 this.updateCharacterUI();

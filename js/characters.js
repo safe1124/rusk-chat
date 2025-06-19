@@ -194,6 +194,73 @@ class CharacterManager {
             current_emotion: char.current_emotion
         };
     }
+    
+    // 감정에 따른 아바타 표시 (1초간)
+    showEmotionAvatar(emotion) {
+        const characterAvatar = document.getElementById('characterAvatar');
+        const typingAvatar = document.querySelector('.typing-avatar img');
+        const introAvatar = document.querySelector('.intro-avatar');
+        
+        if (!characterAvatar) return;
+        
+        const character = this.getCurrentCharacter();
+        const emotionImage = this.getEmotionImage(emotion);
+        
+        // 원래 이미지 저장
+        const originalSrc = characterAvatar.src;
+        const originalTypingSrc = typingAvatar ? typingAvatar.src : null;
+        const originalIntroSrc = introAvatar ? introAvatar.src : null;
+        
+        // 감정 이미지로 변경
+        characterAvatar.src = emotionImage;
+        if (typingAvatar) typingAvatar.src = emotionImage;
+        if (introAvatar) introAvatar.src = emotionImage;
+        
+        // 1초 후 원래 이미지로 복원
+        setTimeout(() => {
+            characterAvatar.src = originalSrc;
+            if (typingAvatar) typingAvatar.src = originalTypingSrc;
+            if (introAvatar) introAvatar.src = originalIntroSrc;
+        }, 1000);
+        
+        // 현재 감정 업데이트
+        character.current_emotion = emotion;
+        this.updateCurrentEmotion(emotion);
+    }
+    
+    // 감정에 맞는 이미지 경로 반환
+    getEmotionImage(emotion) {
+        const validEmotions = {
+            'happy': 'chatbot/happy.png',
+            'sad': 'chatbot/sad.png',
+            'angry': 'chatbot/angry.PNG',
+            'shy': 'chatbot/shy.png',
+            'odoroki': 'chatbot/odoroki.png',
+            'netural': 'chatbot/netural.png',
+            'normal': 'chatbot/normal.png',
+            'brave': 'chatbot/brave.png'
+        };
+        
+        return validEmotions[emotion] || 'chatbot/normal.png';
+    }
+    
+    // 현재 감정 표시 업데이트
+    updateCurrentEmotion(emotion) {
+        const currentEmotionElement = document.getElementById('currentEmotion');
+        if (currentEmotionElement) {
+            const emotionNames = {
+                'happy': '기쁨 😊',
+                'sad': '슬픔 😢',
+                'angry': '화남 😠',
+                'shy': '부끄러움 😳',
+                'odoroki': '놀람 😲',
+                'netural': '평범함 😐',
+                'normal': '기본 🙂',
+                'brave': '용감함 😤'
+            };
+            currentEmotionElement.textContent = emotionNames[emotion] || '기본 🙂';
+        }
+    }
 }
 
 // 전역 캐릭터 매니저 인스턴스
